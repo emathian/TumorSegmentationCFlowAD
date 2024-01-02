@@ -55,31 +55,18 @@ This method has been tested for 3 types of histological images:
 - models - Build encoder and decoder
     - The encoder is based on a pretrained resnet (see: `custom_models/resnet.py`)
     - The decoder is based on FrEIA modules
-    
+
 - main: Main script to train and test the model.
 
 
 
 ## Training Models
-- Run code by selecting class name, feature extractor, input size, flow model etc.
-- The commands below should reproduce our reference MVTec results using WideResnet-50 extractor:
+- An example of the configurations used to segment HE/HES, Ki-67 and PHH3 WSI is available in `Run/Train/TumorNormal/TrainToyDataKi67.sh`
+- *Configs can be viwed in `config.py`*
 ```
-python3 main.py --gpu 0 --pro -inp 512 --dataset mvtec --class-name bottle
-python3 main.py --gpu 0 --pro -inp 256 --dataset mvtec --class-name cable
-python3 main.py --gpu 0 --pro -inp 256 --dataset mvtec --class-name capsule
-python3 main.py --gpu 0 --pro -inp 512 --dataset mvtec --class-name carpet
-python3 main.py --gpu 0 --pro -inp 512 --dataset mvtec --class-name grid
-python3 main.py --gpu 0 --pro -inp 256 --dataset mvtec --class-name hazelnut
-python3 main.py --gpu 0 --pro -inp 512 --dataset mvtec --class-name leather
-python3 main.py --gpu 0 --pro -inp 256 --dataset mvtec --class-name metal_nut
-python3 main.py --gpu 0 --pro -inp 256 --dataset mvtec --class-name pill
-python3 main.py --gpu 0 --pro -inp 512 --dataset mvtec --class-name screw
-python3 main.py --gpu 0 --pro -inp 512 --dataset mvtec --class-name tile
-python3 main.py --gpu 0 --pro -inp 512 --dataset mvtec --class-name toothbrush
-python3 main.py --gpu 0 --pro -inp 128 --dataset mvtec --class-name transistor
-python3 main.py --gpu 0 --pro -inp 512 --dataset mvtec --class-name wood
-python3 main.py --gpu 0 --pro -inp 512 --dataset mvtec --class-name zipper
+bash Run/Train/TumorNormal/TrainToyDataKi67.sh
 ```
+- **Warnings: Network weights will be saved for all epochs in `config.weights-dir/config.class-name/meta-epoch/ModelName_ClassName_MetaEpoch_SubEpoch.pt`. Each checkpoint creates is associated 903MB files**
 
 ## Testing Pretrained Models
 - Download pretrained weights from [Google Drive](https://drive.google.com/drive/folders/1u_DupllCxl1yWvKjf_T6HMPnBoV7cV7o?usp=sharing)
