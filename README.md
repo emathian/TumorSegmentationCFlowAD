@@ -33,14 +33,32 @@ This method has been tested for 3 types of histological images:
     + Number of non-tumor tiles (for test) = 4,815 (33 patients)
 + Ki-67 immunohistochemical stained WSI:
     + Number of tumor tiles (for train and test) = 19,053 (77 patients)
-    + Number of non-tumor tiles (for test) = 10259 (40 patients)
+    + Number of non-tumor tiles (for test) = 10,259 (40 patients)
 + Phosphohistone histone H3 (PHH3)-stained WSIs can be segmented using Ki-67 tumor tiles as a training set.
 
 **These two dataset are available on request from mathiane[at]iarc[dot]who[dot]int and will soon be available online.**
 
 ## Code Organization
-- ./custom_datasets - contains dataloaders for MVTec and STC
-- ./custom_models - contains pretrained feature extractors
+- ./custom_datasets - contains dataloaders for TumorNormalDataset :
+    - The dataloader is based on a file listing the path to the tiles.
+    -  Examples: `./Datasets/ToyTrainingSetKi67Tumor.txt` and `./Datasets/ToyTestSetKi67Tumor.txt`
+
+- ./custom_models 
+    - contains pretrained `resnet` feature extractors:
+        - For the tumor segmentations tasks we used a wide-Resnet 50 (see: `resnet.py` line 352)
+        -  *Note: additional features extrators can be found in the original [CFlow AD repository](https://github.com/gudovskiy/cflow-ad)*
+    - the `utils` contains functions to save and load the checkpoint
+
+
+- ./FrEIA - clone from [https://github.com/VLL-HD/FrEIA](https://github.com/VLL-HD/FrEIA) repository.
+
+- models - Build encoder and decoder
+    - The encoder is based on a pretrained resnet (see: `custom_models/resnet.py`)
+    - The decoder is based on FrEIA modules
+    
+- main: Main script to train and test the model.
+
+
 
 ## Training Models
 - Run code by selecting class name, feature extractor, input size, flow model etc.
