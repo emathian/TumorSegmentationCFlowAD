@@ -266,7 +266,7 @@ def main(c):
     c.dropout = 0.0  # dropout in s-t-networks
     # dataloader parameters
     if  c.dataset == 'TumorNormal':
-        c.data_path =  c.root_data_path
+        print(f"c.dataset = {c.dataset}")
     # To extend for other dataset
     else:
         raise NotImplementedError('{} is not supported dataset!'.format(c.dataset))

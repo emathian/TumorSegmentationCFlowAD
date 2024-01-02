@@ -17,8 +17,7 @@ model_urls = {
     'resnet152': 'https://download.pytorch.org/models/resnet152-b121ed2d.pth',
     'resnext50_32x4d': 'https://download.pytorch.org/models/resnext50_32x4d-7cdf4587.pth',
     'resnext101_32x8d': 'https://download.pytorch.org/models/resnext101_32x8d-8ba56ff5.pth',
-    'wide_resnet50_2': '/gpfsscratch/rech/uli/ueu39kt/CFLOW/features_extractor/wide_resnet50_2-95faca4d.pth',
-    'wide_resnet50_barlowtwin_LNEN': '/gpfsscratch/rech/uli/ueu39kt/barlowtwins/train_tiles_harsh_dataaug_z128/wide_resnet50_90000.pth',
+    'wide_resnet50_2': '/https://download.pytorch.org/models/wide_resnet50_2-95faca4d.pth',
     'wide_resnet101_2': 'https://download.pytorch.org/models/wide_resnet101_2-32ee1156.pth',
 }
 
