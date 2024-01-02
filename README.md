@@ -66,7 +66,7 @@ This method has been tested for 3 types of histological images:
 ```
 bash Run/Train/TumorNormal/TrainToyDataKi67.sh
 ```
-- **Warnings: Network weights will be saved for all epochs in `config.weights-dir/config.class-name/meta-epoch/ModelName_ClassName_MetaEpoch_SubEpoch.pt`. Each checkpoint creates is associated 903MB files**
+- **Warnings: Network weights will be saved for all epochs in `config.weights-dir/config.class-name/meta-epoch/ModelName_ClassName_MetaEpoch_SubEpoch.pt`. Each checkpoint creates is associated 903MB file.**
 
 ## Testing Pretrained Models
 - Download pretrained weights from [Google Drive](https://drive.google.com/drive/folders/1u_DupllCxl1yWvKjf_T6HMPnBoV7cV7o?usp=sharing)
