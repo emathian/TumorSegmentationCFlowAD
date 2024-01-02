@@ -56,5 +56,10 @@ docs/_build/
 # PyBuilder
 target/
 
+
+# OUtput 
 stderr.txt
 stdout.txt
+
+# network weights
+weights/
