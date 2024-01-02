@@ -166,12 +166,7 @@ def test_meta_epoch_lnen(c, epoch, loader, encoder, decoders, pool_layers, N):
             test_dist = [list() for layer in pool_layers]
             test_map = [list() for p in pool_layers]
             for l, layer in enumerate(pool_layers):
-                if 'vit' in c.enc_arch:
-                    e = activation[layer].transpose(1, 2)[...,1:]
-                    e_hw = int(np.sqrt(e.size(2)))
-                    e = e.reshape(-1, e.size(1), e_hw, e_hw)  # BxCxHxW
-                else:
-                    e = activation[layer]  # BxCxHxW
+                e = activation[layer]  # BxCxHxW
 
                 B, C, H, W = e.size()
                 S = H*W
@@ -232,7 +227,6 @@ def test_meta_epoch_lnen(c, epoch, loader, encoder, decoders, pool_layers, N):
             score_label_max = np.max(super_mask, axis=(1, 2))
             score_label_mean = np.mean(super_mask, axis=(1, 2))
             ### write table 
-            # files_path_list_c
             res_df = pd.DataFrame()
             res_df['FilesPath'] = files_path_list_c
             res_df['BinaryLabels'] = labels_c
@@ -241,11 +235,13 @@ def test_meta_epoch_lnen(c, epoch, loader, encoder, decoders, pool_layers, N):
             with open(os.path.join(c.viz_dir, c.class_name, res_tab_name), 'a') as table_file: 
                 for row in range(res_df.shape[0]):
                     file_path_ = res_df[ 'FilesPath'][row]
-                    binary_lab_ = res_df[ 'BinaryLabels'][row]
+                    binary_lab_ = res_df['BinaryLabels'][row]
                     MaxScoreAnomalyMap = res_df[ 'MaxScoreAnomalyMap'][row]
                     MeanScoreAnomalyMap = res_df[ 'MeanScoreAnomalyMap'][row]
                     table_file.write(f"{file_path_},{binary_lab_},{MaxScoreAnomalyMap},{MeanScoreAnomalyMap}\n")
                 table_file.close()
+            if c.viz_anom_map:
+                write_anom_map(c, super_mask, files_path_list_c)
             if i % 1000 == 0 :
                 print('Epoch: {:d} \t step: {:.4f} '.format(epoch, i))
         
@@ -357,12 +353,12 @@ def main(c):
     if c.action_type == 'norm-train':
         train_dataset = TumorNormalDataset(c, is_train=True)
     else: # Inference - Warning Parallel inference not implemented 
-        test_dataset  = TumorNormalDataset(c, is_train=False)
+          test_dataset  = TumorNormalDataset(c, is_train=False)
     # Parallel data loader
     if c.parallel and c.action_type == 'norm-train': 
         batch_size_per_gpu =  c.batch_size // idr_torch_size
         train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset, num_replicas=idr_torch_size, rank=idr_torch_rank) 
-        train_loader = torch.utils.data.DataLoader(dataset=train_dataset,  batch_size=batch_size_per_gpu,  shuffle=False,   num_workers=0,                         pin_memory=True, sampler=train_sampler)
+        train_loader = torch.utils.data.DataLoader(dataset=train_dataset,  batch_size=batch_size_per_gpu,  shuffle=False,   num_workers=0,  pin_memory=True, sampler=train_sampler)
     # Single GPU data loader
     else:
         if c.action_type == 'norm-train':
@@ -388,13 +384,11 @@ def main(c):
                     ddp_decoder.load_state_dict(torch.load(c_checkpoint))
                     print('EVAL IN C.PARALLEL test_meta_epoch_lnen')
                     ## Run inference
-                    height, width, test_image_list, test_dist, gt_label_list, gt_mask_list, files_path_list = test_meta_epoch_lnen(
-                            c, epoch, test_loader, ddp_encoder, ddp_decoders, pool_layers, N) 
+                    test_meta_epoch_lnen(c, epoch, test_loader, ddp_encoder, ddp_decoders, pool_layers, N) 
             else:
                 ## Not parallel inference
                 load_weights(encoder, decoders, c.checkpoint)
-                height, width, test_image_list, test_dist, gt_label_list, gt_mask_list, files_path_list = test_meta_epoch_lnen(
-                        c, epoch, test_loader, encoder, decoders, pool_layers, N) # test_meta_epoch_lnen
+                test_meta_epoch_lnen(c, epoch, test_loader, encoder, decoders, pool_layers, N) # test_meta_epoch_lnen
 
         ## Training    
         elif c.action_type == 'norm-train':

@@ -58,25 +58,39 @@ This method has been tested for 3 types of histological images:
 
 - main: Main script to train and test the model.
 
-
-
 ## Training Models
 - An example of the configurations used to segment HE/HES, Ki-67 and PHH3 WSI is available in `Run/Train/TumorNormal/TrainToyDataKi67.sh`
 - *Configs can be viwed in `config.py`*
+- The commands below are used to train the model based on the toy data set:
 ```
 bash Run/Train/TumorNormal/TrainToyDataKi67.sh
 ```
 - **Warnings: Network weights will be saved for all epochs in `config.weights-dir/config.class-name/meta-epoch/ModelName_ClassName_MetaEpoch_SubEpoch.pt`. Each checkpoint creates is associated 903MB file.**
 
 ## Testing Pretrained Models
-- Download pretrained weights from [Google Drive](https://drive.google.com/drive/folders/1u_DupllCxl1yWvKjf_T6HMPnBoV7cV7o?usp=sharing)
-- The command below should reproduce MVTec results using light-weight MobileNetV3L extractor (AUROC, AUPRO) = (98.38%, 94.72%):
+- Download pretrained weights are available on request and will be soon available online 
+- An example of the configurations used to infer the test set is gien in `Run/Test/TumorNormal/TestToyDataset.sh`
 ```
-python3 main.py --gpu 0 --pro -enc mobilenet_v3_large --dataset mvtec --action-type norm-test -inp INPUT --class-name CLASS --checkpoint PATH/FILE.PT
+bash Run/Test/TumorNormal/TestToyDataset.sh
 ```
+- Main configurations:
+    + checkpoint: Path to model weights to be loaded to infer the test tiles.
+    + viz-dir: Directory where the result table will be saved.
+    + viz-anom-map: If specified, all anomaly maps will be written to the `viz-dir` directory in `.npy` format.
 
-## CFLOW-AD Architecture
-![CFLOW-AD](./images/fig-cflow.svg)
+## Results exploration
+For each tile, `results_table.csv` summarises
+    - Its path, which may include the patient ID
+    - Binary tile labels, useful for sorted datasets: Tumour = 2 and Non-tumour = 1 
+    - Max anomaly scores: value of the highest anomaly score of the tile
+    - Mean anomaly scores: average anomaly score of the tile
 
-## Reference CFLOW-AD Results for MVTec
-![CFLOW-AD](./images/fig-table.svg)
+**The distributions of these score are used to segment the WSI.**
+
+## TO DO LIST
+
++ :construction: Check parallel training 
++ :construction: Check parallel test
++ :construction: Tumor segmentation map Python and Notebook
++ :construction: Model checkpoints Ki-67 and HES/HE
++ :construction: Notebook explore results

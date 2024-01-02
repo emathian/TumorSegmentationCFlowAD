@@ -73,8 +73,8 @@ def get_args():
     parser.add_argument('--no-cuda', action='store_true', default=False,
                         help='disables CUDA training')
    
-    #parser.add_argument('--viz', action='store_true', default=False,
-    #                    help='saves test data visualizations')
+    parser.add_argument('--viz-anom-map', action='store_true', default=False,
+                       help='saves anomaly maps')
     
     #parser.add_argument('--video-path', default='.', type=str, metavar='D',
     #                    help='video file path')

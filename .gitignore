@@ -66,3 +66,6 @@ stdout.txt
 
 # network weights
 weights/
+
+# Results directory
+VizToyTraining/

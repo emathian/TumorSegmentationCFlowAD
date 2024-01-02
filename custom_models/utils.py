@@ -71,6 +71,7 @@ def load_weights(encoder, decoders, filename):
     path = os.path.join(filename)
     state = torch.load(path, map_location='cuda:0')
     encoder.load_state_dict(state['encoder_state_dict'], strict=False)
+    print("Load decoder")
     decoders = [decoder.load_state_dict(state, strict=False) for decoder, state in zip(decoders, state['decoder_state_dict'])]
     print('Loading weights from {}'.format(filename))
 

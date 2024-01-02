@@ -2,6 +2,7 @@
 python ../../../main.py \
 		--gpu 0 \
 		-inp 384 \
+		--action-type norm-train \
 		--dataset TumorNormal \
 		--class-name Tumor \
 		--list-file-train ../../../Datasets/ToyTrainingSetKi67Tumor.txt \
