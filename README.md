@@ -1,5 +1,6 @@
 ## Tumor segmentation with CFLOW-AD: 
 Unsupervised tumor segmentation method using an adapted version of CFlow, an anomaly detection model.
+This model was trained to learn the distribution of tumor tiles extracted from whole slide images (WSI), so that non-tumor areas could be detected at the time of inference.
 
 - Original article: D. Gudovskiy [CFlow-AD](https://openaccess.thecvf.com/content/WACV2022/papers/Gudovskiy_CFLOW-AD_Real-Time_Unsupervised_Anomaly_Detection_With_Localization_via_Conditional_Normalizing_WACV_2022_paper.pdf), WACV 2022.
 - Original code: [https://github.com/gudovskiy/cflow-ad](https://github.com/gudovskiy/cflow-ad)
@@ -26,7 +27,16 @@ $ conda env create -f environment.yml
 ```
 
 ## Datasets
-We support [MVTec AD dataset](https://www.mvtec.com/de/unternehmen/forschung/datasets/mvtec-ad/) for anomaly localization in factory setting and [Shanghai Tech Campus (STC)](https://svip-lab.github.io/dataset/campus_dataset.html) dataset with surveillance camera videos. Please, download dataset from URLs and extract to *data* folder or make symlink to that folder or [change default data path in main.py](https://github.com/gudovskiy/cflow-ad/blob/6a520d5eeb60e7df99a644f31836fb5cf7ffbfde/main.py#L48)).
+This method has been tested for 3 types of histological images:
++ Haematoxylin and Eosin (HE) | Haematoxylin, Eosin Saffron (HES) stained WSI:
+    + Number of tumor tiles (for train and test) = 12,991 (69 patients)
+    + Number of non-tumor tiles (for test) = 4,815 (33 patients)
++ Ki-67 immunohistochemical stained WSI:
+    + Number of tumor tiles (for train and test) = 19,053 (77 patients)
+    + Number of non-tumor tiles (for test) = 10259 (40 patients)
++ Phosphohistone histone H3 (PHH3)-stained WSIs can be segmented using Ki-67 tumor tiles as a training set.
+
+**These two dataset are available on request from mathiane[at]iarc[dot]who[dot]int and will soon be available online.**
 
 ## Code Organization
 - ./custom_datasets - contains dataloaders for MVTec and STC
