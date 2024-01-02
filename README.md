@@ -79,11 +79,11 @@ bash Run/Test/TumorNormal/TestToyDataset.sh
     + viz-anom-map: If specified, all anomaly maps will be written to the `viz-dir` directory in `.npy` format.
 
 ## Results exploration
-For each tile, `results_table.csv` summarises
-    - Its path, which may include the patient ID
-    - Binary tile labels, useful for sorted datasets: Tumour = 2 and Non-tumour = 1 
-    - Max anomaly scores: value of the highest anomaly score of the tile
-    - Mean anomaly scores: average anomaly score of the tile
+For each tile, `results_table.csv` summarises:
+- Its path, which may include the patient ID
+- Binary tile labels, useful for sorted datasets: Tumour = 2 and Non-tumour = 1 
+- Max anomaly scores: value of the highest anomaly score of the tile
+- Mean anomaly scores: average anomaly score of the tile
 
 **The distributions of these score are used to segment the WSI.**
 
