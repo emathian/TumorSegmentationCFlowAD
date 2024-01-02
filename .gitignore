@@ -2,6 +2,9 @@
 __pycache__/
 *.py[cod]
 
+.ipynb_checkpoints
+Run/Train/TumorNormal/.ipynb_checkpoints/
+Run/Test/TumorNormal/.ipynb_checkpoints/
 # C extensions
 *.so
 
