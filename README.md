@@ -85,13 +85,16 @@ For each tile, `results_table.csv` summarises:
 - Max anomaly scores: value of the highest anomaly score of the tile
 - Mean anomaly scores: average anomaly score of the tile
 
+**The distributions of these score are used to segment the WSI.**
+
 An example of result exploration for the segmentation of HE/HES WSI is given in `ExploreResultsHETumorSeg.html`.
 
-**The distributions of these score are used to segment the WSI.**
+## Get tumor segmentation map 
+
+The `TumorSegmentationMaps.py` script is used to create the tumour segmentation map for a WSI. An example configuration is given in `ExRunTumorSegmentationMap.sh`. The results of this script are stored in the `Example_SegmentationMap_PHH3` folder, which also gives an example of the model's performance in segmenting a PHH3-immunostained WSI.
 
 ## TO DO LIST
 
 + :construction: Check parallel training 
 + :construction: Check parallel test
-+ :construction: Tumor segmentation map Python and Notebook
 + :construction: Model checkpoints Ki-67 and HES/HE
