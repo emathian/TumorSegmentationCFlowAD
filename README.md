@@ -1,3 +1,4 @@
+![PresentationImg](ImgPresentation2.png)
 ## Tumor segmentation with CFLOW-AD: 
 Unsupervised tumor segmentation method using an adapted version of CFlow, an anomaly detection model.
 This model was trained to learn the distribution of tumor tiles extracted from whole slide images (WSI), so that non-tumor areas could be detected at the time of inference.
