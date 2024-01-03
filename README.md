@@ -85,6 +85,8 @@ For each tile, `results_table.csv` summarises:
 - Max anomaly scores: value of the highest anomaly score of the tile
 - Mean anomaly scores: average anomaly score of the tile
 
+An example of result exploration for the segmentation of HE/HES WSI is given in `ExploreResultsHETumorSeg.html`.
+
 **The distributions of these score are used to segment the WSI.**
 
 ## TO DO LIST
@@ -93,4 +95,3 @@ For each tile, `results_table.csv` summarises:
 + :construction: Check parallel test
 + :construction: Tumor segmentation map Python and Notebook
 + :construction: Model checkpoints Ki-67 and HES/HE
-+ :construction: Notebook explore results
