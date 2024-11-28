@@ -24,7 +24,7 @@ def get_args():
                         help='feature extractor: wide_resnet50_2')
     parser.add_argument('-wb', '--backbone_weights', default='', type=str, metavar='C', 
                         help='path to Wide resnet 50 weights if not specified \
-                        /https://download.pytorch.org/models/wide_resnet50_2-95faca4d.pth will be downloaded')
+                        https://download.pytorch.org/models/wide_resnet50_2-95faca4d.pth will be downloaded')
     parser.add_argument('-dec', '--dec-arch', default='freia-cflow', type=str, metavar='A',
                         help='normalizing flow model (default: freia-cflow)')
     parser.add_argument('-pl', '--pool-layers', default=3, type=int, metavar='L',
