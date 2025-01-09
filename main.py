@@ -225,8 +225,16 @@ def test_meta_epoch_lnen(c, epoch, loader, encoder, decoders, pool_layers, N):
                 score_map += test_map[l]
             score_mask = score_map
             super_mask = score_mask
-            score_label_max = np.max(super_mask, axis=(1, 2))
-            score_label_mean = np.mean(super_mask, axis=(1, 2))
+
+            if super_mask.ndim == 2:
+                score_label_max = np.max(super_mask, axis=(0, 1))
+                score_label_mean = np.mean(super_mask, axis=(0, 1))
+            elif super_mask.ndim == 3:
+                score_label_max = np.max(super_mask, axis=(1, 2))
+                score_label_mean = np.mean(super_mask, axis=(1, 2))
+            else:
+                raise ValueError(f"Unexpected dimensions for super_mask: {super_mask.shape}")
+            
             ### write table 
             res_df = pd.DataFrame()
             res_df['FilesPath'] = files_path_list_c
