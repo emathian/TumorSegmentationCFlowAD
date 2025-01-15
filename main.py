@@ -14,6 +14,7 @@ from utils import *
 from custom_datasets import *
 from custom_models import *
 import pandas as pd
+from PIL import Image
 ## parallel
 import hostlist
 import torch.distributed as dist
@@ -127,6 +128,48 @@ def train_meta_epoch(c, epoch, loader, encoder, decoders, optimizer, pool_layers
             if c.verbose:
                 print('Epoch: {:d}.{:d} \t train loss: {:.4f}, lr={:.6f}'.format(epoch, sub_epoch, mean_train_loss, lr))
             save_weights_epoch(c, encoder, decoders, c.model, epoch, sub_epoch) 
+
+
+def write_anom_map(c, super_mask, files_path_list_c, threshold=0.5):
+    """
+    Generate and save a segmented image using the anomaly score map.
+    
+    Args:
+        c: Configuration object with output directory.
+        original_image_path: Path to the original image.
+        anomaly_score_map: Anomaly score map (2D numpy array).
+        threshold: Threshold for binary segmentation (default: 0.5).
+    """
+    if not files_path_list_c:
+        raise Exception('No base image detected')
+
+    # Load the original image
+    original_image = Image.open(files_path_list_c[0]).convert("RGBA")
+
+    # Threshold the anomaly score map
+    binary_mask = (super_mask > threshold).astype(np.uint8) * 255  # Scale mask to 0 or 255
+
+    # Convert binary mask to a PIL image
+    binary_mask_image = Image.fromarray(binary_mask).convert("L")
+
+    # Resize binary mask to match the original image dimensions
+    binary_mask_resized = binary_mask_image.resize(original_image.size, resample=Image.NEAREST)
+
+    # Overlay the binary mask on the original image (optional)
+    overlay = Image.new("RGBA", original_image.size, (255, 0, 0, 128))  # Red mask with transparency
+    overlay.paste(binary_mask_resized, (0, 0), binary_mask_resized)
+
+    # Combine overlay with the original image
+    segmented_image = Image.alpha_composite(original_image, overlay)
+
+    # Save binary mask and segmented image
+    os.makedirs(c.viz_dir, exist_ok=True)
+    binary_mask_path = os.path.join(c.viz_dir, "binary_mask.png")
+    segmented_image_path = os.path.join(c.viz_dir, "segmented_image.png")
+
+    binary_mask_resized.save(binary_mask_path)
+    segmented_image.save(segmented_image_path)
+    
     
 def test_meta_epoch_lnen(c, epoch, loader, encoder, decoders, pool_layers, N):
     # test

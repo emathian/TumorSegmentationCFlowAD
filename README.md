@@ -99,3 +99,5 @@ The `TumorSegmentationMaps.py` script is used to create the tumour segmentation 
 + :construction: Check parallel training 
 + :construction: Check parallel test
 + :construction: Model checkpoints Ki-67 and HES/HE
+
+/opt/conda/envs/TumorSegmentationWithCFlow/bin/python /build/TumorSegmentationCFlowAD/main.py --action-type norm-test --checkpoint /app/weights/TumorNormal_wide_resnet50_2_freia-cflow_pl3_cb8_inp384_run0_Tumor_10_4.pt --gpu 0 -inp 384 --dataset TumorNormal --class-name Data --list-file-test /app/static/66e9a3a0634e9e3a51f2b690/tmp/tmpmoa0xf4t/tmpdqdcfsfq.txt --viz-dir /app/static/66e9a3a0634e9e3a51f2b690/tmp/tmpmoa0xf4t --viz-anom-map
