@@ -147,7 +147,7 @@ def write_anom_map(c, super_mask, files_path_list_c, threshold=0.5):
         os.makedirs(output_dir)
 
     for i, file_path in enumerate(files_path_list_c):
-        img_np = super_mask[i].cpu().numpy()  # Assuming `super_mask` contains tensors
+        img_np = super_mask[i] if isinstance(super_mask, np.ndarray) else super_mask[i].cpu().numpy()
 
         # Apply threshold to create binary segmentation
         binary_img = (img_np > threshold).astype(np.uint8) * 255
