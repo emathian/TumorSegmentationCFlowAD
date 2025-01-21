@@ -142,7 +142,7 @@ def write_anom_map(c, super_mask, files_path_list_c, threshold=0.5):
     """
 
     # Ensure the output directory exists
-    output_dir = c.output_dir  # Assuming this is defined in your configuration
+    output_dir = c.viz_dir  # Assuming this is defined in your configuration
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
