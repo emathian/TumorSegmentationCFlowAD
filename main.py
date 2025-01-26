@@ -163,11 +163,21 @@ def write_anom_map(c, super_mask, files_path_list_c, original_images, threshold=
         if isinstance(original_img, Image.Image):
             original_img = np.array(original_img)  # Convert PIL Image to numpy array
 
-        # Create an RGB version of the original image
+        # Ensure the original image is in the correct shape (H, W, 3)
         if original_img.ndim == 2:  # Grayscale image
             original_img = np.stack([original_img] * 3, axis=-1)
         elif original_img.shape[2] == 1:  # Single-channel image
             original_img = np.concatenate([original_img] * 3, axis=-1)
+
+        # Reshape binary_mask to match the image dimensions
+        H, W = original_img.shape[:2]
+        try:
+            binary_mask = binary_mask.reshape(H, W)
+        except ValueError as e:
+            print(f"Error reshaping binary_mask: {e}")
+            print(f"binary_mask shape: {binary_mask.shape}")
+            print(f"Expected shape: ({H}, {W})")
+            raise
 
         # Create a colored overlay for the anomaly map
         overlay = np.zeros_like(original_img)
