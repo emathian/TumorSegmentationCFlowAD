@@ -130,14 +130,15 @@ def train_meta_epoch(c, epoch, loader, encoder, decoders, optimizer, pool_layers
             save_weights_epoch(c, encoder, decoders, c.model, epoch, sub_epoch) 
 
 
-def write_anom_map(c, super_mask, files_path_list_c, threshold=0.5):
+def write_anom_map(c, super_mask, files_path_list_c, original_images, threshold=0.5):
     """
-    Write anomaly maps to disk.
+    Write segmented anomaly maps to disk with red and blue colors.
 
     Parameters:
     - c: Configuration object containing settings.
-    - super_mask: The super-pixel mask of the anomalies.
+    - super_mask: The super-pixel mask of the anomalies (numpy array or tensor).
     - files_path_list_c: List of file paths for saving the maps.
+    - original_images: List of original images (PIL Images or numpy arrays).
     - threshold: Threshold value for binary segmentation (default=0.5).
     """
 
@@ -146,18 +147,47 @@ def write_anom_map(c, super_mask, files_path_list_c, threshold=0.5):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    for _, file_path in enumerate(files_path_list_c):
+    for idx, file_path in enumerate(files_path_list_c):
+        # Convert super_mask to numpy array if it's a tensor
         img_np = super_mask if isinstance(super_mask, np.ndarray) else super_mask.cpu().numpy()
 
+        # If super_mask is 3D (batch of images), select the corresponding image
+        if img_np.ndim == 3:
+            img_np = img_np[idx]
+
         # Apply threshold to create binary segmentation
-        binary_img = (img_np > threshold).astype(np.uint8) * 255
+        binary_mask = (img_np > threshold).astype(np.uint8)
+
+        # Get the original image
+        original_img = original_images[idx]
+        if isinstance(original_img, Image.Image):
+            original_img = np.array(original_img)  # Convert PIL Image to numpy array
+
+        # Create an RGB version of the original image
+        if original_img.ndim == 2:  # Grayscale image
+            original_img = np.stack([original_img] * 3, axis=-1)
+        elif original_img.shape[2] == 1:  # Single-channel image
+            original_img = np.concatenate([original_img] * 3, axis=-1)
+
+        # Create a colored overlay for the anomaly map
+        overlay = np.zeros_like(original_img)
+
+        # Color anomalies in red (255, 0, 0)
+        overlay[binary_mask == 1] = [255, 0, 0]
+
+        # Color normal regions in blue (0, 0, 255)
+        overlay[binary_mask == 0] = [0, 0, 255]
+
+        # Blend the original image with the overlay
+        alpha = 0.5  # Transparency factor for the overlay
+        segmented_img = (original_img * (1 - alpha) + overlay * alpha).astype(np.uint8)
 
         # Convert to PIL Image and save
-        img = Image.fromarray(binary_img)
-        output_path = os.path.join(output_dir, f"{os.path.basename(file_path)}_anomaly_map.png")
-        img.save(output_path)
+        segmented_img_pil = Image.fromarray(segmented_img)
+        output_path = os.path.join(output_dir, f"{os.path.basename(file_path)}_segmented.png")
+        segmented_img_pil.save(output_path)
 
-        print(f"Saved anomaly map: {output_path}")
+        print(f"Saved segmented image: {output_path}")
     
     
 def test_meta_epoch_lnen(c, epoch, loader, encoder, decoders, pool_layers, N):
@@ -282,7 +312,10 @@ def test_meta_epoch_lnen(c, epoch, loader, encoder, decoders, pool_layers, N):
                     table_file.write(f"{file_path_},{binary_lab_},{MaxScoreAnomalyMap},{MeanScoreAnomalyMap}\n")
                 table_file.close()
             if c.viz_anom_map:
-                write_anom_map(c, super_mask, files_path_list_c)
+                # Convert images to numpy arrays if they are tensors
+                original_images = [t2np(img) for img in image]  # Convert batch of images to numpy
+
+                write_anom_map(c, super_mask, files_path_list_c, original_images, threshold=0.5)
             if i % 1000 == 0 :
                 print('Epoch: {:d} \t step: {:.4f} '.format(epoch, i))
         
