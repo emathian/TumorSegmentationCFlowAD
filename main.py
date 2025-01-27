@@ -130,7 +130,7 @@ def train_meta_epoch(c, epoch, loader, encoder, decoders, optimizer, pool_layers
             save_weights_epoch(c, encoder, decoders, c.model, epoch, sub_epoch) 
 
 
-def write_anom_map(c, super_mask, files_path_list_c, original_images, threshold=0.5):
+def write_anom_map(c, super_mask, files_path_list_c):
     """
     Write segmented anomaly maps to disk with red and blue colors.
 
@@ -139,9 +139,7 @@ def write_anom_map(c, super_mask, files_path_list_c, original_images, threshold=
     - super_mask: The super-pixel mask of the anomalies (numpy array or tensor).
     - files_path_list_c: List of file paths for saving the maps.
     - original_images: List of original images (PIL Images or numpy arrays).
-    - threshold: Threshold value for binary segmentation (default=0.5).
     """
-
     # Ensure the output directory exists
     output_dir = c.viz_dir  # Assuming this is defined in your configuration
     if not os.path.exists(output_dir):
@@ -155,38 +153,41 @@ def write_anom_map(c, super_mask, files_path_list_c, original_images, threshold=
         if img_np.ndim == 3:
             img_np = img_np[idx]
 
-        # Apply threshold to create binary segmentation
-        binary_mask = (img_np > threshold).astype(np.uint8)
-
         # Get the original image
-        original_img = original_images[idx]
-        if isinstance(original_img, Image.Image):
-            original_img = np.array(original_img)  # Convert PIL Image to numpy array
-
-        # Ensure the original image is in the correct shape (H, W, 3)
-        if original_img.ndim == 2:  # Grayscale image
-            original_img = np.stack([original_img] * 3, axis=-1)
-        elif original_img.shape[2] == 1:  # Single-channel image
-            original_img = np.concatenate([original_img] * 3, axis=-1)
+        original_img = Image.open(file_path)
+        original_img = np.array(original_img)  # Convert PIL Image to numpy array
 
         # Reshape binary_mask to match the image dimensions
         H, W = original_img.shape[:2]
         try:
-            binary_mask = binary_mask.reshape(H, W)
+            img_np = img_np.reshape(H, W)  # Reshape to (H, W)
         except ValueError as e:
             print(f"Error reshaping binary_mask: {e}")
-            print(f"binary_mask shape: {binary_mask.shape}")
+            print(f"binary_mask shape: {img_np.shape}")
             print(f"Expected shape: ({H}, {W})")
             raise
 
         # Create a colored overlay for the anomaly map
         overlay = np.zeros_like(original_img)
 
-        # Color anomalies in red (255, 0, 0)
-        overlay[binary_mask == 1] = [255, 0, 0]
+        # Define thresholds and corresponding colors
+        colors = [
+            (0, 0, 255),  # Blue
+            (0, 128, 255),  # Light Blue
+            (0, 255, 255),  # Cyan
+            (255, 128, 0),  # Orange
+            (255, 0, 0)  # Red
+        ]
 
-        # Color normal regions in blue (0, 0, 255)
-        overlay[binary_mask == 0] = [0, 0, 255]
+        thresholds = [(i + 1) / 10 for i in range(len(colors))]  # Thresholds from 0.1 to 0.5
+
+        # Apply color for each threshold
+        for i, threshold in enumerate(thresholds):
+            binary_mask = (img_np > threshold).astype(np.uint8)
+            color = colors[i]
+
+            # Apply color to the overlay where the mask is active
+            overlay[binary_mask == 1] = color
 
         # Blend the original image with the overlay
         alpha = 0.5  # Transparency factor for the overlay
@@ -322,10 +323,7 @@ def test_meta_epoch_lnen(c, epoch, loader, encoder, decoders, pool_layers, N):
                     table_file.write(f"{file_path_},{binary_lab_},{MaxScoreAnomalyMap},{MeanScoreAnomalyMap}\n")
                 table_file.close()
             if c.viz_anom_map:
-                # Convert images to numpy arrays if they are tensors
-                original_images = [t2np(img) for img in image]  # Convert batch of images to numpy
-
-                write_anom_map(c, super_mask, files_path_list_c, original_images, threshold=0.5)
+                write_anom_map(c, super_mask, files_path_list_c)
             if i % 1000 == 0 :
                 print('Epoch: {:d} \t step: {:.4f} '.format(epoch, i))
         
