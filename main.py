@@ -20,6 +20,7 @@ import hostlist
 import torch.distributed as dist
 from ignite.contrib import metrics
 from torch.nn.parallel import DistributedDataParallel as DDP
+from scipy.ndimage import zoom
 
 gamma = 0.0
 theta = torch.nn.Sigmoid()
@@ -160,7 +161,8 @@ def write_anom_map(c, super_mask, files_path_list_c):
         # Reshape binary_mask to match the image dimensions
         H, W = original_img.shape[:2]
         try:
-            img_np = img_np.reshape(H, W)  # Reshape to (H, W)
+            zoom_factors = (H / img_np.shape[0], W / img_np.shape[1])
+            img_np = zoom(img_np, zoom_factors, order=1)
         except ValueError as e:
             print(f"Error reshaping binary_mask: {e}")
             print(f"binary_mask shape: {img_np.shape}")
