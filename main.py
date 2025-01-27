@@ -172,21 +172,21 @@ def write_anom_map(c, super_mask, files_path_list_c):
         # Create a colored overlay for the anomaly map
         overlay = np.zeros_like(original_img)
 
-        # Define thresholds and corresponding colors
-        colors = [
-            (0, 0, 255),  # Blue
-            (0, 128, 255),  # Light Blue
-            (0, 255, 255),  # Cyan
-            (255, 128, 0),  # Orange
-            (255, 0, 0)  # Red
-        ]
+        # Define the RGB values for red and blue
+        red = np.array([255, 0, 0])
+        blue = np.array([0, 0, 255])
 
-        thresholds = [(i + 1) / 10 for i in range(len(colors))]  # Thresholds from 0.1 to 0.5
+        # Number of steps
+        num_steps = 10
+
+        # Linearly interpolate between red and blue
+        color_range = [np.round(red + (blue - red) * (i / (num_steps - 1))).astype(int) for i in range(num_steps)]
+        thresholds = [(i + 1) / 10 for i in range(len(color_range))] 
 
         # Apply color for each threshold
         for i, threshold in enumerate(thresholds):
             binary_mask = (img_np > threshold).astype(np.uint8)
-            color = colors[i]
+            color = color_range[i]
 
             # Apply color to the overlay where the mask is active
             overlay[binary_mask == 1] = color
