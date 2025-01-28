@@ -180,10 +180,10 @@ def write_anom_map(c, super_mask, files_path_list_c):
             [128, 192, 128],
             [ 0, 255, 255],
             [ 0, 192, 255],
-            [ 0, 128, 255],
-            [ 0,  64, 255],
-            [ 0,   0, 255],
-            [ 0,   0, 255]
+            [ 0, 0, 0],
+            [ 0,  0, 0],
+            [ 0,   0, 0],
+            [ 0,   0, 0]
         ]
         thresholds = [(i + 1) / 10 for i in range(len(colors))] 
 
@@ -193,7 +193,8 @@ def write_anom_map(c, super_mask, files_path_list_c):
             color = colors[i]
 
             # Apply color to the overlay where the mask is active
-            overlay[binary_mask == 1] = color
+            if sum(color) > 0:
+                overlay[binary_mask == 1] = color
 
         # Blend the original image with the overlay
         alpha = 0.5  # Transparency factor for the overlay
